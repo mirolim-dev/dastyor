@@ -1,5 +1,6 @@
 from webob import Request, Response
 from parse import parse
+import inspect
 
 class DastyorApp:
     def __init__(self):
@@ -14,7 +15,15 @@ class DastyorApp:
         response = Response()
         handler, kwargs = self.find_handler(request)
         if handler is not None: 
-            handler(request, response, **kwargs)
+            if inspect.isclass(handler):
+                handler_method = getattr(handler(), request.method.lower(), None)
+                if handler_method is None:
+                    response.status_code = 405
+                    response.text = "Method not allowed"
+                    return response
+                handler_method(request, response, **kwargs)
+            else:
+                handler(request, response, **kwargs)
         else:
             self.default_response(response)
 
@@ -33,6 +42,8 @@ class DastyorApp:
         response.text = "Page not found."
 
     def route(self, path):
+        if path in self.routes:
+            raise AssertionError("Route is dublicated. Lets change the URL.")
         def wrapper(handler):
             self.routes[path] = handler
             return handler
