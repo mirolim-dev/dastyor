@@ -35,3 +35,19 @@ def test_default_response(test_client):
     response = test_client.get("http://testserver/notexistent")
     assert response.text == "Page not found."
     assert response.status_code == 404
+
+def test_class_based_get(app, test_client):
+    @app.route("/cars")
+    class Cars:
+        def get(self, req, resp):
+            resp.text = "Cars Page"
+    assert test_client.get("http://testserver/cars").text == "Cars Page"
+
+def test_class_based_post(app, test_client):
+    @app.route("/planes")
+    class Planes:
+        def post(self, req, resp):
+            resp.text = "Our sky is under the controll by the planes"
+    assert test_client.post("http://testserver/planes").text == "Our sky is under the controll by the planes"
+    assert test_client.get("http://testserver/planes").text == "Method not allowed"
+    assert test_client.get("http://testserver/planes").status_code == 405
