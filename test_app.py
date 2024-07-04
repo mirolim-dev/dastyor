@@ -22,3 +22,11 @@ def test_requests_can_be_sent_by_test_client(app, test_client):
 
     response = test_client.get("http://testserver/home")
     assert response.text == "Hey from Home page"
+
+def test_parametrized_routing(app, test_client):
+    @app.route("/welcome/{name}")
+    def welcome(request, response, name):
+        response.text = f"Welcome {name}"
+    
+    assert test_client.get("http://testserver/welcome/Mirolim").text == "Welcome Mirolim"
+    assert test_client.get("http://testserver/welcome/Hadji").text == "Welcome Hadji"
