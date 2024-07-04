@@ -30,3 +30,8 @@ def test_parametrized_routing(app, test_client):
     
     assert test_client.get("http://testserver/welcome/Mirolim").text == "Welcome Mirolim"
     assert test_client.get("http://testserver/welcome/Hadji").text == "Welcome Hadji"
+
+def test_default_response(test_client):
+    response = test_client.get("http://testserver/notexistent")
+    assert response.text == "Page not found."
+    assert response.status_code == 404
