@@ -51,3 +51,19 @@ def test_class_based_post(app, test_client):
     assert test_client.post("http://testserver/planes").text == "Our sky is under the controll by the planes"
     assert test_client.get("http://testserver/planes").text == "Method not allowed"
     assert test_client.get("http://testserver/planes").status_code == 405
+
+def test_alternative_route_adding(app, test_client):
+    def new_handler(request, response):
+        response.text = "From new handler"
+
+    app.add_route("/new-handler", new_handler)
+    assert test_client.get("http://testserver/new-handler").text == "From new handler"
+
+def test_dublicate_route(app, test_client):
+    def new_handler(request, response):
+        response.text = "From new handle"
+    app.add_route("/new-handler", new_handler)
+    with pytest.raises(AssertionError):
+        def new_handler2(request, response):
+            response.text = "From new handle2"
+        app.add_route("/new-handler", new_handler)

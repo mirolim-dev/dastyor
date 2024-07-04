@@ -41,6 +41,10 @@ class DastyorApp:
         response.status_code = 404
         response.text = "Page not found."
 
+    def add_route(self, path, handler):
+        assert path not in self.routes, "Dublicate route please change the URL."
+        self.routes[path] = handler
+
     def route(self, path):
         if path in self.routes:
             raise AssertionError("Route is dublicated. Lets change the URL.")
