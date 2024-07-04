@@ -23,5 +23,5 @@ class Books:
         response.text = "Books Page"
 
     def post(self, request, response):
-        response.text = "Endpoin to create a book"
+        response.text = "Endpoint to create a book"
 
