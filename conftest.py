@@ -1,5 +1,5 @@
 import pytest
-from app import DastyorApp
+from dastyor.wsgi import DastyorApp
 
 @pytest.fixture 
 def app():
