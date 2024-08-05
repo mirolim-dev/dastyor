@@ -6,6 +6,9 @@ import wsgiadapter
 from jinja2 import Environment, FileSystemLoader
 import os
 from whitenoise import WhiteNoise
+import click
+import platform
+from waitress import serve as waitress_serve
 
 from .middleware import Middleware
 from .response import Response
@@ -104,4 +107,18 @@ class DastyorApp:
     def add_middleware(self, middleware_class):
         self.middleware.add(middleware_class)
 
-app = DastyorApp()
+    def runserver(self, host="127.0.0.1", port="1050"):
+        """Run the Dastyor application."""
+        if platform.system() == 'Windows':
+            print("Running with Waitress on Windows")
+            click.echo(f"Dastyor application running on http://{host}:{port}")
+            waitress_serve(self, host=host, port=port)
+        else:
+            try:
+                from gunicorn.app.wsgiapp import WSGIApplication
+                print("Running with Gunicorn on Unix-based system")
+                sys.argv = ["gunicorn", "your_framework.dastyor_app:app"]
+                WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]").run()
+            except ImportError:
+                print("Gunicorn is not installed. Please install it on Unix-based systems.")
+                sys.exit(1)        
