@@ -1,10 +1,4 @@
-import sys
 import os
-import click
-import platform
-
-from waitress import serve as waitress_serve
-from .app import app
 
 def get_sample():
     content = {
